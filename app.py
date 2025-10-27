@@ -1,38 +1,38 @@
 import streamlit as st
 import random
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 # --- Mood data ---
 MOODS = {
     "Happy": {
-        "color": "#FFF9C4",
+        "color": "#FFF8E1",
         "emoji": "😄",
         "quotes": [
             "Happiness is not by chance, but by choice.",
             "Let your smile change the world.",
             "Joy is contagious — pass it on!"
         ],
-        "sound": "https://actions.google.com/sounds/v1/ambiences/birds_in_forest.ogg"
+        "sound": "https://cdn.pixabay.com/download/audio/2021/08/08/audio_37bce610c2.mp3?filename=birds-forest-ambience-6101.mp3"
     },
     "Sad": {
-        "color": "#B3E5FC",
+        "color": "#BBDEFB",
         "emoji": "😢",
         "quotes": [
             "It’s okay to feel what you’re feeling.",
             "Tears are words the heart can’t express.",
             "Storms make trees take deeper roots."
         ],
-        "sound": "https://actions.google.com/sounds/v1/water/stream.ogg"
+        "sound": "https://cdn.pixabay.com/download/audio/2021/09/01/audio_21f4f272f8.mp3?filename=rain-ambient-110624.mp3"
     },
     "Calm": {
-        "color": "#C8E6C9",
+        "color": "#E8F5E9",
         "emoji": "🌿",
         "quotes": [
             "Peace begins with a deep breath.",
             "Stillness speaks louder than noise.",
             "You are exactly where you need to be."
         ],
-        "sound": "https://actions.google.com/sounds/v1/water/flowing_water.ogg"
+        "sound": "https://cdn.pixabay.com/download/audio/2021/09/02/audio_98b00d16c5.mp3?filename=water-stream-ambient-110682.mp3"
     },
     "Creative": {
         "color": "#F3E5F5",
@@ -42,17 +42,17 @@ MOODS = {
             "Every artist was first an amateur.",
             "Your imagination can build worlds."
         ],
-        "sound": "https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"
+        "sound": "https://cdn.pixabay.com/download/audio/2021/09/09/audio_1e87921a91.mp3?filename=soft-piano-ambient-110980.mp3"
     },
     "Stressed": {
-        "color": "#FFCDD2",
+        "color": "#FFEBEE",
         "emoji": "😖",
         "quotes": [
             "Breathe. This too shall pass.",
             "Relax — even the sky takes breaks.",
             "Take one step at a time."
         ],
-        "sound": "https://actions.google.com/sounds/v1/ambiences/beach.ogg"
+        "sound": "https://cdn.pixabay.com/download/audio/2021/08/08/audio_1d1a45efb8.mp3?filename=waves-beach-ambience-6071.mp3"
     }
 }
 
@@ -66,13 +66,14 @@ st.markdown(
 )
 
 mood = st.selectbox("Select your mood:", list(MOODS.keys()))
+
 if mood:
     mood_data = MOODS[mood]
     color = mood_data["color"]
     emoji = mood_data["emoji"]
     quote = random.choice(mood_data["quotes"])
 
-    # --- Apply background color ---
+    # --- Apply background color with smooth transition ---
     st.markdown(
         f"""
         <style>
@@ -85,12 +86,23 @@ if mood:
         unsafe_allow_html=True
     )
 
+    # --- Display mood content ---
     st.markdown(f"<h2 style='text-align:center;'>{emoji} {mood} {emoji}</h2>", unsafe_allow_html=True)
     st.markdown(f"<h3 style='text-align:center; color:#4A148C;'>“{quote}”</h3>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align:center; color:#616161;'>Mood logged at {datetime.now().strftime('%I:%M %p')}</p>", unsafe_allow_html=True)
 
-    # --- Optional: Play sound ---
-    st.audio(mood_data["sound"])
+    # --- Local timezone (UTC+5 for Pakistan) ---
+    now_pk = datetime.now(timezone(timedelta(hours=5)))
+    st.markdown(f"<p style='text-align:center; color:#616161;'>Mood logged at {now_pk.strftime('%I:%M %p')}</p>", unsafe_allow_html=True)
+
+    # --- Auto-play sound ---
+    st.markdown(
+        f"""
+        <audio autoplay loop>
+            <source src="{mood_data['sound']}" type="audio/mpeg">
+        </audio>
+        """,
+        unsafe_allow_html=True
+    )
 
 st.markdown("---")
 st.markdown("<p style='text-align:center; color:gray;'>Made with ❤️ using Streamlit</p>", unsafe_allow_html=True)
